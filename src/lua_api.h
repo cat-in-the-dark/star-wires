@@ -1,7 +1,7 @@
 #ifndef LUA_API_H
 #define LUA_API_H
 
-void lua_Init();
+int lua_Init();
 
 void lua_Update();
 

@@ -123,12 +123,22 @@ typedef struct LineModel {
   // TODO: animation data?
 } LineModel;
 
-int loadModels() {
-  models[0] = LoadModel("assets/rock_01.obj");
+void loadModels() {
+  int i = 0;
+  models[i++] = LoadModel("assets/rock_01.obj");
+  models[i++] = LoadModel("assets/rock_02.obj");
+  models[i++] = LoadModel("assets/rock_03.obj");
+  models[i++] = LoadModel("assets/rock_04.obj");
+  models[i++] = LoadModel("assets/rock_05.obj");
+  models[i++] = LoadModel("assets/rock_13.obj");
+  models[i++] = LoadModel("assets/rock_20.obj");
+  models[i++] = LoadModel("assets/rock_21.obj");
 }
 
 int main(void) {
-  lua_Init();
+  if (lua_Init() != 0) {
+    return -1;
+  }
 
   const int screenWidth = 640;
   const int screenHeight = 480;

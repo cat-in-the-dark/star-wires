@@ -128,7 +128,7 @@ void lua_Update(void) {
 }
 
 
-void lua_Init(void) {
+int lua_Init(void) {
   L = luaL_newstate();
   luaL_openlibs(L);
 
@@ -148,9 +148,11 @@ void lua_Init(void) {
   if (err != LUA_OK) {
     const char* msg = lua_tostring(L, -1);
     TraceLog(LOG_ERROR, "lua: %s", msg);
-    return;
+    return -1;
   }
+
   TraceLog(LOG_INFO, "Lua loaded\n");
+  return 0;
 }
 
 void lua_Draw(void) {
