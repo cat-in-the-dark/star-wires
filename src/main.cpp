@@ -18,7 +18,7 @@ static LApi lApi;
 
 Model models[128];
 
-static Camera camera = {0};
+Camera camera = {0};
 
 static RenderTexture2D target;
 static Shader bloom;
@@ -138,8 +138,6 @@ void loadModels() {
 }
 
 int main(void) {
-  lApi.Run();
-
   const int screenWidth = 640;
   const int screenHeight = 480;
 
@@ -163,6 +161,8 @@ int main(void) {
   models[0] = LoadModel("assets/rock_21.obj");
 
   SetTargetFPS(60);
+
+  lApi.Run();
 
 #if defined(PLATFORM_WEB)
   emscripten_set_main_loop(Update, 0, 1);
