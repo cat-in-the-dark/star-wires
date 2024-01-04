@@ -25,7 +25,7 @@ static Shader bloom;
 static Shader barycentricShader;
 static int barycentricLoc;
 
-void DrawLineModel(Model model, Vector3 position, float scale, Color color) {
+void DrawLineModelEx(Model model, Vector3 position, Vector3 rotationAxis, float rotationAngle, float scale, Color color) {
   float x = 0;
   float y = 0;
   float z = 0;
@@ -34,6 +34,7 @@ void DrawLineModel(Model model, Vector3 position, float scale, Color color) {
 
   rlPushMatrix();
   rlTranslatef(position.x, position.y, position.z);
+  rlRotatef(rotationAngle, rotationAxis.x, rotationAxis.y, rotationAxis.z);
   rlScalef(scale, scale, scale);
 
   rlEnableBackfaceCulling();
@@ -65,6 +66,11 @@ void DrawLineModel(Model model, Vector3 position, float scale, Color color) {
   rlPopMatrix();
 }
 
+void DrawLineModel(Model model, Vector3 position, float scale, Color color) {
+  Vector3 rotationAxis = {0, 0, 0};
+  DrawLineModelEx(model, position, rotationAxis, 0.0f, scale, color);
+}
+
 void CallFunc(const char* name) {
   lua_getglobal(L, name);
   if (lua_isfunction(L, -1)) {
@@ -91,6 +97,34 @@ int lua_DrawModel(lua_State* L) {
 
     DrawLineModel(model, pos, scale, RED);
     DrawModel(model, pos, scale * 0.99, BLACK);  // FIXME: the bigger scale the bigger scale offset. not good
+  } else {
+    luaL_error(L, "invalid parameters, mdl(idx, x,y,z, scale)");
+  }
+
+  return 0;
+}
+
+int lua_DrawModelEx(lua_State* L) {
+  int n = lua_gettop(L);
+  if (n == 9) {
+    int model_id = luaL_checknumber(L, 1) - 1;
+    float x = luaL_checknumber(L, 2);
+    float y = luaL_checknumber(L, 3);
+    float z = luaL_checknumber(L, 4);
+    float scale = luaL_checknumber(L, 5);
+
+    float x_axis = luaL_checknumber(L, 6);
+    float y_axis = luaL_checknumber(L, 7);
+    float z_axis = luaL_checknumber(L, 8);
+    float angle = luaL_checknumber(L, 9);
+
+    Vector3 pos = {x, y, z};
+    Vector3 axis = {x_axis, y_axis, z_axis};
+    Vector3 vscale = {scale, scale, scale};
+    Model model = models[model_id];  // TODO: check model_id out of bound
+
+    DrawLineModelEx(model, pos, axis, angle, scale, RED);
+    DrawModelEx(model, pos, axis, angle, vscale, BLACK);  // FIXME: the bigger scale the bigger scale offset. not good
   } else {
     luaL_error(L, "invalid parameters, mdl(idx, x,y,z, scale)");
   }
@@ -160,6 +194,9 @@ void lua_Init(void) {
 
   lua_pushcfunction(L, lua_DrawModel);
   lua_setglobal(L, "mdl");
+
+  lua_pushcfunction(L, lua_DrawModelEx);
+  lua_setglobal(L, "mdlex");
 
   int err = luaL_dofile(L, "assets/main.lua");
   if (err != LUA_OK) {
@@ -234,6 +271,10 @@ typedef struct LineModel {
   // TODO: animation data?
 } LineModel;
 
+int loadModels() {
+  models[0] = LoadModel("assets/Car2.obj");
+}
+
 int main(void) {
   lua_Init();
 
@@ -250,6 +291,8 @@ int main(void) {
   camera.up = (Vector3){0.0f, 1.6f, 0.0f};        // Camera up vector (rotation towards target)
   camera.fovy = 45.0f;                            // Camera field-of-view Y
   camera.projection = CAMERA_PERSPECTIVE;         // Camera projection type
+
+  loadModels();
 
   bloom = LoadShader(0, TextFormat("assets/shaders/glsl%i/bloom.fs", GLSL_VERSION));
 

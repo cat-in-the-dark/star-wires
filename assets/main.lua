@@ -7,5 +7,5 @@ function Update()
 end
 
 function Draw()
-    -- mdl(1, 0,0,0, 1)
+    mdlex(1, 0,0,0, 1, 1,0,0, timer * 100)
 end
