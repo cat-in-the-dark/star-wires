@@ -2,7 +2,7 @@
 #include <rlgl.h>
 #include <stdio.h>
 
-#include "lua_api.h"
+#include "lapi.h"
 
 #if defined(PLATFORM_DESKTOP)
 #define GLSL_VERSION 330
@@ -13,6 +13,8 @@
 #if defined(PLATFORM_WEB)
 #include <emscripten/emscripten.h>
 #endif
+
+static LApi lApi;
 
 Model models[128];
 
@@ -28,7 +30,7 @@ void Draw(void) {
 }
 
 void Update() {
-  lua_Update();
+  lApi.Update();
 
   UpdateCamera(&camera, CAMERA_ORBITAL);
 
@@ -40,7 +42,7 @@ void Update() {
 
   // Draw();
 
-  lua_Draw();
+  lApi.Draw();
 
   EndMode3D();
 
@@ -136,9 +138,7 @@ void loadModels() {
 }
 
 int main(void) {
-  if (lua_Init() != 0) {
-    return -1;
-  }
+  lApi.Run();
 
   const int screenWidth = 640;
   const int screenHeight = 480;
@@ -171,8 +171,6 @@ int main(void) {
     Update();
   }
 #endif
-
-  lua_Dispose();
 
   UnloadModel(models[0]);  // Unload model
   UnloadRenderTexture(target);
