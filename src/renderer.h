@@ -1,12 +1,55 @@
 #pragma once
 
 #include <raylib.h>
+#include <raymath.h>
 #include <rlgl.h>
+
+
+void DrawStar(Vector3 position, float radius) {
+  auto color = WHITE;
+  if (position.z > 100) {
+    color.a = Remap(position.z, 100, 150, 255, 0);
+  }
+
+  Vector3 radiusVec = {0, radius, 0};
+  auto top = Vector3Add(position, radiusVec);
+  auto bottom = Vector3Add(position, Vector3Scale(radiusVec, -1.0f));
+
+  auto leftStart = Vector3RotateByAxisAngle(top, position, PI / 3);
+  auto leftEnd = Vector3RotateByAxisAngle(bottom, position, PI / 3);
+
+  auto rightStart = Vector3RotateByAxisAngle(top, position, -PI / 3);
+  auto rightEnd = Vector3RotateByAxisAngle(bottom, position, -PI / 3);
+
+  rlPushMatrix();
+  rlTranslatef(position.x, position.y, position.z);
+
+  rlEnableBackfaceCulling();
+  rlBegin(RL_LINES);
+  rlColor4ub(color.r, color.g, color.b, color.a);
+
+  rlVertex3f(top.x, top.y, top.z);
+  rlVertex3f(bottom.x, bottom.y, bottom.z);
+
+  rlVertex3f(leftStart.x, leftStart.y, leftStart.z);
+  rlVertex3f(leftEnd.x, leftEnd.y, leftEnd.z);
+
+  rlVertex3f(rightStart.x, rightStart.y, rightStart.z);
+  rlVertex3f(rightEnd.x, rightEnd.y, rightEnd.z);
+
+  rlDisableBackfaceCulling();
+  rlEnd();
+  rlPopMatrix();
+}
 
 void DrawLineModelEx(Model model, Vector3 position, Vector3 rotationAxis, float rotationAngle, float scale, Color color) {
   float x = 0;
   float y = 0;
   float z = 0;
+
+  if (position.z > 100) {
+    color.a = Remap(position.z, 100, 150, 255, 0);
+  }
 
   Mesh mesh = model.meshes[0];
 

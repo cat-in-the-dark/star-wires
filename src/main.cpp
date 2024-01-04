@@ -32,7 +32,7 @@ void Draw(void) {
 void Update() {
   lApi.Update();
 
-  UpdateCamera(&camera, CAMERA_ORBITAL);
+  // UpdateCamera(&camera, CAMERA_ORBITAL);
 
   BeginTextureMode(target);
 
@@ -151,9 +151,9 @@ int main(void) {
   // char *extensions = (char *)glGetString(GL_EXTENSIONS);
 
   // Define the camera to look into our 3d world
-  camera.position = (Vector3){5.0f, 5.0f, 5.0f};  // Camera position
-  camera.target = (Vector3){0.0f, 1.0f, 0.0f};    // Camera looking at point
-  camera.up = (Vector3){0.0f, 1.6f, 0.0f};        // Camera up vector (rotation towards target)
+  camera.position = {0.0f, 0.0f, -10.0f};  // Camera position
+  camera.target = {0.0f, 0.0f, 1.0f};    // Camera looking at point
+  camera.up = {0.0f, 1.0f, 0.0f};        // Camera up vector (rotation towards target)
   camera.fovy = 45.0f;                            // Camera field-of-view Y
   camera.projection = CAMERA_PERSPECTIVE;         // Camera projection type
 

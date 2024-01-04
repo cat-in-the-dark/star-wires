@@ -1,4 +1,5 @@
-print("Hello world!")
+require("assets/objects")
+require("assets/vectors")
 
 local timer = 0
 
@@ -13,41 +14,69 @@ MODEL = {
     ROCK_21=8,
 }
 
-ROCKS = {}
-
-function Rock(x, y, z, model)
-    local self = {
-        x=0,y=0,z=0,
-        rot_x=1,rot_y=0,rot_z=0,
-        rot_angle=0,
-        model=model
-    }
-
-    local update = function(dt)
-        self.rot_angle = self.rot_angle + dt * 100
-    end
-
-    local draw = function()
-        mdlex(self.model, self.x, self.y, self.z, 1, self.rot_x, self.rot_y, self.rot_z, self.rot_angle)
-    end
-
-    return {
-        update = update,
-        draw = draw
-    }
+function randomPos()
+    local scale = 15
+    return (rand() - 0.5) * scale, (rand() - 0.5) * scale
 end
 
+function generateRandomStar()
+    local angle = rand() * 2 * math.pi
+    local minDistanca, maxDistance = 15, 100
+    local distance = rand(minDistanca, maxDistance)
+    local x, y = math.cos(angle), math.sin(angle)
+    x, y = x * distance, y * distance
+    local scale = 0.5
+    local speedMin, speedMax = -10, -5
+    local initDist = 150
+    local radius = rand() * scale
+    local speed = V3(0, 0, rand(speedMin, speedMax))
+    table.insert(ROCKS, Star(V3(x, y, initDist), radius, speed))
+end
+
+function generateRandomRock()
+    local initDist = 150
+    local x, y = randomPos()
+    local minusHalf = V3(-0.5, -0.5, -0.5)
+    local rotation = V3Add(V3Rand(), minusHalf)
+    local speed = V3(0, 0, -20)
+    local model = rand(1, 8)
+    table.insert(ROCKS, Rock(V3(x, y, initDist), rotation, speed, model))
+end
+
+function updateRocks()
+    for i=#ROCKS,1,-1 do
+        ROCKS[i].update(dt)
+        if ROCKS[i].get().pos.z < -10 then
+            table.remove(ROCKS, i)
+        end
+    end
+end
+
+ROCKS = {}
+TIMERS = {}
 
 function Init()
-    rock = Rock(0, 0, 0, MODEL.ROCK_03)
+    for i=1,100 do
+        generateRandomStar()
+    end
+
+    table.insert(TIMERS, Timer(0.02, generateRandomStar))
+    table.insert(TIMERS, Timer(0.5, generateRandomRock))
 end
 
 function Update()
+    print(#ROCKS)
     timer = timer + dt
-    rock.update(dt)
+
+    updateRocks()
+
+    for i=1,#TIMERS do
+        TIMERS[i].update(dt)
+    end
 end
 
 function Draw()
-    -- mdlex(1, 0,0,0, 1, 1,0,0, timer * 100)
-    rock.draw()
+    for i=1,#ROCKS do
+        ROCKS[i].draw()
+    end
 end

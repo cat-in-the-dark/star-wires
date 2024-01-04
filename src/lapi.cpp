@@ -82,6 +82,8 @@ void LApi::Run() {
                                         camera.target.x, "ty", camera.target.y, "tz", camera.target.z);
   lua["mouse"] = lua.create_table_with("px", GetMouseX(), "py", GetMouseY(), "dx", 0, "dy", 0);
   lua["screen"] = lua.create_table_with("width", GetScreenWidth(), "height", GetScreenHeight());
+  lua["star"] = [](float x, float y, float z, float radius) { DrawStar({x, y, z}, radius); };
+
   must(lua.script_file("assets/main.lua"));
 
   TraceLog(LOG_INFO, "Lua loaded\n");
