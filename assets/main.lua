@@ -37,7 +37,10 @@ function Rock(x, y, z, model)
     }
 end
 
-rock = Rock(0, 0, 0, MODEL.ROCK_02)
+
+function Init()
+    rock = Rock(0, 0, 0, MODEL.ROCK_03)
+end
 
 function Update()
     timer = timer + dt

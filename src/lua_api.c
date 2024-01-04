@@ -152,6 +152,8 @@ int lua_Init(void) {
   }
 
   TraceLog(LOG_INFO, "Lua loaded\n");
+
+  CallFunc("Init");
   return 0;
 }
 
