@@ -70,7 +70,7 @@ int calculateBarycentric(float** barycentric, int n_vertices) {
   };
 
   TraceLog(LOG_INFO, "calculateBarycentric n=%d vertices=%d", n, n_vertices);
-  float* bc = MemAlloc(6 * n * sizeof(float));
+  float* bc = reinterpret_cast<float*>(MemAlloc(6 * n * sizeof(float)));
   if (!bc) {
     TraceLog(LOG_ERROR, "failed to allocate barycentric coordinates");
     return -1;

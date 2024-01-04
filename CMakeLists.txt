@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.15)
-project(FC3D C)
+project(FC3D CXX)
 
-set(CMAKE_C_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 
-file(GLOB_RECURSE SOURCES src/*.c)
+file(GLOB_RECURSE SOURCES src/*.cpp)
 file(GLOB_RECURSE HEADERS src/*.h)
 
 if (EMSCRIPTEN)
@@ -35,10 +35,14 @@ endif ()
 add_subdirectory(vendor/raylib)
 add_subdirectory(vendor/lua)
 
+set(SOL2_LUA_VERSION "5.4.4" CACHE STRING "The version of Lua used")
+set(SOL2_BUILD_LUA FALSE CACHE BOOL "Always build Lua, do not search for it in the system")
+add_subdirectory(vendor/sol2)
+
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 
-target_include_directories(${PROJECT_NAME} PUBLIC SYSTEM vendor/raylib/src vendor/lua/)
-target_link_libraries(${PROJECT_NAME} raylib lua)
+target_include_directories(${PROJECT_NAME} PUBLIC SYSTEM vendor/raylib/src vendor/lua/ vendor/sol2/include/)
+target_link_libraries(${PROJECT_NAME} raylib lua sol2)
 
 if (${PLATFORM} MATCHES "Web")
     SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES LINK_FLAGS "--embed-file assets/")
