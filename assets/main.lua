@@ -1,6 +1,8 @@
 require("assets/objects")
 require("assets/vectors")
+require("assets/cursor")
 
+local cursor = NewCursor()
 local timer = 0
 
 MODEL = {
@@ -73,10 +75,16 @@ function Update()
     for i=1,#TIMERS do
         TIMERS[i].update(dt)
     end
+
+    cursor.update(dt)
 end
 
 function Draw()
     for i=1,#ROCKS do
         ROCKS[i].draw()
     end
+end
+
+function DrawCanvas()
+    cursor.draw()
 end
