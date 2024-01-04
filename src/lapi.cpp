@@ -5,6 +5,14 @@
 
 extern Model models[128];
 
+void must(sol::protected_function_result result) {
+  if (!result.valid()) {
+    sol::error err = result;
+    TraceLog(LOG_ERROR, err.what());
+    exit(-1);
+  }
+}
+
 void lua_DrawModelEx(
   int model_id, float x, float y, float z, float scale, 
   float x_axis, float y_axis, float z_axis, float angle
@@ -21,17 +29,21 @@ void lua_DrawModel(
 }
 
 LApi::LApi() {
-  lua.open_libraries(sol::lib::base, sol::lib::package);
+  lua.open_libraries(
+    sol::lib::base, sol::lib::package, sol::lib::base, 
+    sol::lib::string, sol::lib::math, sol::lib::table, 
+    sol::lib::coroutine
+  );
 }
 
 void LApi::Draw() {
-  lua["Draw"].call();
+  must(lua["Draw"].call());
 }
 
 void LApi::Update() {
   lua["dt"] = GetFrameTime();
   lua["time"] = GetTime();
-  lua["Update"].call();
+  must(lua["Update"].call());
 }
 
 void LApi::Run() {
@@ -40,14 +52,9 @@ void LApi::Run() {
   lua["mdl"] = lua_DrawModel;
   lua["mdlex"] = lua_DrawModelEx;
 
-  auto result = lua.script_file("assets/main.lua");
-  if (!result.valid()) {
-    sol::error err = result;
-    TraceLog(LOG_ERROR, err.what());
-    return;
-  }
+  must(lua.script_file("assets/main.lua"));
 
   TraceLog(LOG_INFO, "Lua loaded\n");
 
-  lua["Init"].call();
+  must(lua["Init"].call());
 }
