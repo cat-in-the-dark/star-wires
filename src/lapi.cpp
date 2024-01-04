@@ -1,6 +1,7 @@
 #include "lapi.h"
 
 #include <raylib.h>
+#include <rcamera.h>
 
 #include "renderer.h"
 
@@ -64,12 +65,12 @@ void LApi::Update() {
 
   must(lua["Update"].call());
 
-  camera.position.x = lua["camera"]["px"];
-  camera.position.y = lua["camera"]["py"];
-  camera.position.z = lua["camera"]["pz"];
-  camera.target.x = lua["camera"]["tx"];
-  camera.target.y = lua["camera"]["ty"];
-  camera.target.z = lua["camera"]["tz"];
+  lua["camera"]["px"] = camera.position.x;
+  lua["camera"]["py"] = camera.position.y;
+  lua["camera"]["pz"] = camera.position.z;
+  lua["camera"]["tx"] = camera.target.x;
+  lua["camera"]["ty"] = camera.target.y;
+  lua["camera"]["tz"] = camera.target.z;
 }
 
 void LApi::Run() {
@@ -78,8 +79,21 @@ void LApi::Run() {
   lua["mdl"] = lua_DrawModel;
   lua["mdlex"] = lua_DrawModelEx;
   lua["circle"] = [](float x, float y, float radius) { DrawCircleV({x, y}, radius, RED); };
-  lua["camera"] = lua.create_table_with("px", camera.position.x, "py", camera.position.y, "pz", camera.position.z, "tx",
-                                        camera.target.x, "ty", camera.target.y, "tz", camera.target.z);
+  lua["camera"] = lua.create_table_with(
+      "px", camera.position.x, "py", camera.position.y, "pz", camera.position.z, "tx", camera.target.x, "ty",
+      camera.target.y, "tz", camera.target.z, "moveUp", [](float distance) { CameraMoveUp(&camera, distance); },
+      "moveRight", [](float distance) { CameraMoveRight(&camera, distance, true); }, "setPos",
+      [](float x, float y, float z) {
+        camera.position.x = x;
+        camera.position.y = y;
+        camera.position.z = z;
+      },
+      "setTarget",
+      [](float x, float y, float z) {
+        camera.target.x = x;
+        camera.target.y = y;
+        camera.target.z = z;
+      });
   lua["mouse"] = lua.create_table_with("px", GetMouseX(), "py", GetMouseY(), "dx", 0, "dy", 0);
   lua["screen"] = lua.create_table_with("width", GetScreenWidth(), "height", GetScreenHeight());
   must(lua.script_file("assets/main.lua"));

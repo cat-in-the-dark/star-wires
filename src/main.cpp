@@ -32,8 +32,6 @@ void Draw(void) {
 void Update() {
   lApi.Update();
 
-  UpdateCamera(&camera, CAMERA_ORBITAL);
-
   BeginTextureMode(target);
 
   ClearBackground(BLACK);
