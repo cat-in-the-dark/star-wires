@@ -1,0 +1,4 @@
+cmake-build-*
+vendor/
+!vendor/raylib.zip
+!vendor/lua.zip
