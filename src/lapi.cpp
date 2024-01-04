@@ -7,6 +7,18 @@
 extern Model models[128];
 extern Camera camera;
 
+float NormedMouseX() {
+  float mx = GetMouseX();
+  float sw = GetScreenWidth();
+  return (mx / sw - 0.5) * 2.0;
+}
+
+float NormedMouseY() {
+  float my = GetMouseY();
+  float sh = GetScreenHeight();
+  return (0.5 - my / sh) * 2.0;
+}
+
 void must(sol::protected_function_result result) {
   if (!result.valid()) {
     sol::error err = result;
@@ -35,9 +47,21 @@ void LApi::Draw() {
   must(lua["Draw"].call());
 }
 
+void LApi::DrawCanvas() {
+  must(lua["DrawCanvas"].call());
+}
+
 void LApi::Update() {
   lua["dt"] = GetFrameTime();
   lua["time"] = GetTime();
+
+  lua["mouse"]["px"] = GetMouseX();
+  lua["mouse"]["py"] = GetMouseY();
+
+  auto mouseDelta = GetMouseDelta();
+  lua["mouse"]["dx"] = mouseDelta.x;
+  lua["mouse"]["dy"] = mouseDelta.y;
+
   must(lua["Update"].call());
 
   camera.position.x = lua["camera"]["px"];
@@ -53,9 +77,11 @@ void LApi::Run() {
   lua["time"] = 0.0;
   lua["mdl"] = lua_DrawModel;
   lua["mdlex"] = lua_DrawModelEx;
+  lua["circle"] = [](float x, float y, float radius) { DrawCircleV({x, y}, radius, RED); };
   lua["camera"] = lua.create_table_with("px", camera.position.x, "py", camera.position.y, "pz", camera.position.z, "tx",
                                         camera.target.x, "ty", camera.target.y, "tz", camera.target.z);
-
+  lua["mouse"] = lua.create_table_with("px", GetMouseX(), "py", GetMouseY(), "dx", 0, "dy", 0);
+  lua["screen"] = lua.create_table_with("width", GetScreenWidth(), "height", GetScreenHeight());
   must(lua.script_file("assets/main.lua"));
 
   TraceLog(LOG_INFO, "Lua loaded\n");

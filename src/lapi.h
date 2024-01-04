@@ -4,11 +4,13 @@
 #include <sol/sol.hpp>
 
 class LApi {
-    sol::state lua;
-  public:
-    LApi();
+  sol::state lua;
 
-    void Run();
-    void Draw();
-    void Update();
+ public:
+  LApi();
+
+  void Run();
+  void Draw();
+  void DrawCanvas();
+  void Update();
 };

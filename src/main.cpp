@@ -46,6 +46,8 @@ void Update() {
 
   EndMode3D();
 
+  lApi.DrawCanvas();
+
   EndTextureMode();
 
   BeginDrawing();
@@ -142,6 +144,9 @@ int main(void) {
   const int screenHeight = 480;
 
   InitWindow(screenWidth, screenHeight, "raylib [3d]");
+  // ToggleFullscreen();
+
+  DisableCursor();  // Limit cursor to relative movement inside the window
 
   // char *extensions = (char *)glGetString(GL_EXTENSIONS);
 
@@ -156,7 +161,7 @@ int main(void) {
 
   bloom = LoadShader(0, TextFormat("assets/shaders/glsl%i/bloom.fs", GLSL_VERSION));
 
-  target = LoadRenderTexture(screenWidth, screenHeight); 
+  target = LoadRenderTexture(screenWidth, screenHeight);
 
   models[0] = LoadModel("assets/rock_21.obj");
 
