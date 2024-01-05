@@ -21,9 +21,13 @@ Particles particles[128];
 Model models[128];
 int n_models = 0;
 
+Camera debugCamera = {0};
 Camera camera = {0};
 
+bool debug = false;
+
 static RenderTexture2D target;
+static RenderTexture2D debugTarget;
 static Shader bloom;
 static Shader barycentricShader;
 static int barycentricLoc;
@@ -36,34 +40,37 @@ void Update() {
   lApi.Update();
 
   if (IsKeyDown(KEY_UP)) {
-    camera.position.y += 1;
+    debugCamera.position.y += 1;
   }
   if (IsKeyDown(KEY_DOWN)) {
-    camera.position.y -= 1;
+    debugCamera.position.y -= 1;
   }
   if (IsKeyDown(KEY_LEFT)) {
-    camera.position.x -= 1;
+    debugCamera.position.x -= 1;
   }
   if (IsKeyDown(KEY_RIGHT)) {
-    camera.position.x += 1;
+    debugCamera.position.x += 1;
   }
   if (IsKeyDown(KEY_W)) {
-    camera.target.y += 1;
+    debugCamera.target.y += 1;
   }
   if (IsKeyDown(KEY_S)) {
-    camera.target.y -= 1;
+    debugCamera.target.y -= 1;
   }
   if (IsKeyDown(KEY_A)) {
-    camera.target.x -= 1;
+    debugCamera.target.x -= 1;
   }
   if (IsKeyDown(KEY_D)) {
-    camera.target.x += 1;
+    debugCamera.target.x += 1;
   }
   if (IsKeyDown(KEY_Q)) {
-    camera.position.z += 1;
+    debugCamera.position.z += 1;
   }
   if (IsKeyDown(KEY_E)) {
-    camera.position.z -= 1;
+    debugCamera.position.z -= 1;
+  }
+  if (IsKeyPressed(KEY_O)) {
+    debug = !debug;
   }
 
   // UpdateCamera(&camera, CAMERA_ORBITAL);
@@ -91,6 +98,23 @@ void Update() {
   DrawTextureRec(target.texture, (Rectangle){0, 0, (float) target.texture.width, (float) -target.texture.height},
                  (Vector2){0, 0}, WHITE);
   EndShaderMode();
+
+  if (debug) {
+    BeginTextureMode(debugTarget);
+
+    ClearBackground(BLACK);
+
+    BeginMode3D(debugCamera);
+
+    lApi.Draw();
+
+    EndMode3D();
+
+    EndTextureMode();
+
+    DrawTextureEx(debugTarget.texture, {0, 0}, 0, 1.0f, WHITE);
+    // DrawTextureEx(target.texture, {0, 0}, 0, 0.3f, WHITE);
+  }
 
   DrawFPS(10, 10);
 
@@ -200,12 +224,19 @@ int main(void) {
   camera.fovy = 45.0f;                     // Camera field-of-view Y
   camera.projection = CAMERA_PERSPECTIVE;  // Camera projection type
 
+  debugCamera.position = {0.0f, 0.0f, -10.0f};  // Camera position
+  debugCamera.target = {0.0f, 0.0f, 1.0f};      // Camera looking at point
+  debugCamera.up = {0.0f, 1.0f, 0.0f};          // Camera up vector (rotation towards target)
+  debugCamera.fovy = 45.0f;                     // Camera field-of-view Y
+  debugCamera.projection = CAMERA_PERSPECTIVE;  // Camera projection type
+
   loadModels();
   loadParticles();
 
   bloom = LoadShader(0, TextFormat("assets/shaders/glsl%i/bloom.fs", GLSL_VERSION));
 
   target = LoadRenderTexture(screenWidth, screenHeight);
+  debugTarget = LoadRenderTexture(screenWidth, screenHeight);
 
   SetTargetFPS(60);
 

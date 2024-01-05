@@ -1,6 +1,7 @@
 #include "lapi.h"
 
 #include <raylib.h>
+#include <raymath.h>
 #include <rcamera.h>
 
 #include "particles.h"
@@ -46,6 +47,46 @@ void lua_DrawParticles(int particle_id, float x, float y, float z, float x_axis,
   Particles p = particles[particle_id - 1];
   p.Draw({x, y, z}, angle, {x_axis, y_axis, z_axis}, time, speed, lifetime);
 }
+
+auto lua_ModelLineCollision(sol::state& lua, int i, float px, float py, float pz, float rx, float ry, float rz,
+                            float angle, float scale, float lx1, float ly1, float lz1, float lx2, float ly2,
+                            float lz2) {
+  Vector3 lineStart = {lx1, ly1, lz1};
+  Vector3 lineEnd = {lx2, ly2, lz2};
+  auto lineLength = 2.0f;
+  Ray ray = {lineStart, Vector3Subtract(lineEnd, lineStart)};
+  auto model = models[i];
+
+  Vector3 position = {px, py, pz};
+  Vector3 rotationAxis = {rx, ry, rz};
+
+  auto distance = Vector3Distance(position, lineEnd);
+  if (distance < lineLength) {
+    return lua.create_table_with("hit", true, "dist", distance);
+  }
+  // } else {
+  //   TraceLog(LOG_INFO, "Close encounter: %.3f %.3f %.3f %.3f <=> %.3f %.3f %.3f", distance, px, py, pz, lx2, ly2,
+  //   lz2);
+  // }
+
+  // Calculate transformation matrix from function parameters
+  // Get transform matrix (rotation -> scale -> translation)
+  Matrix matScale = MatrixScale(scale, scale, scale);
+  Matrix matRotation = MatrixRotate(rotationAxis, angle * DEG2RAD);
+  Matrix matTranslation = MatrixTranslate(position.x, position.y, position.z);
+  Matrix matTransform = MatrixMultiply(MatrixMultiply(matScale, matRotation), matTranslation);
+
+  auto result = GetRayCollisionMesh(ray, model.meshes[0], matTransform);
+  if (result.hit) {
+    TraceLog(LOG_INFO, "Ray hit %.3f %.3f %.3f <=> %.3f %.3f %.3f", px, py, pz, lx2, ly2, lz2);
+    if (result.distance < lineLength) {
+      TraceLog(LOG_INFO, "Line hit %.3f %.3f %.3f %.3f <=> %.3f %.3f %.3f", result.distance, px, py, pz, lx2, ly2, lz2);
+      return lua.create_table_with("hit", true, "dist", result.distance);
+    }
+  }
+
+  return lua.create_table_with("hit", false, "dist", result.distance);
+};
 
 LApi::LApi() {
   lua.open_libraries(sol::lib::base, sol::lib::package, sol::lib::base, sol::lib::string, sol::lib::math,
@@ -124,6 +165,10 @@ void LApi::Run() {
     auto dir = ray.direction;
     TraceLog(LOG_INFO, "%.3f %.3f %.3f => %.3f %.3f %.3f", pos.x, pos.y, pos.z, dir.x, dir.y, dir.z);
     DrawRay(ray, GREEN);
+  };
+  lua["collmdlline"] = [&lua = lua](int i, float px, float py, float pz, float rx, float ry, float rz, float angle,
+                                    float scale, float lx1, float ly1, float lz1, float lx2, float ly2, float lz2) {
+    return lua_ModelLineCollision(lua, i, px, py, pz, rx, ry, rz, angle, scale, lx1, ly1, lz1, lx2, ly2, lz2);
   };
 
   must(lua.script_file("assets/main.lua"));

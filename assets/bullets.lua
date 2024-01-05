@@ -4,9 +4,9 @@ function NewShooter()
     }
 
     local spawn = function(cursor)
-        local bpos = SHIP_PARTS[2].get().pos
+        local bpos = Ship.get().left.get().pos
         if self.is_left then
-            bpos = SHIP_PARTS[1].get().pos
+            bpos = Ship.get().right.get().pos
         end
 
         self.is_left = not self.is_left
@@ -14,7 +14,7 @@ function NewShooter()
         local sdir = V3Mul(ray.dir, 75)
         local pos = V3Add(ray.pos, sdir)
 
-        local dz = V3(0, 0, 11)
+        local dz = V3(0, 0, 1)
         local spawn = V3Add(bpos, dz)
         local speed = V3Mul(V3Norm(V3Sub(pos, spawn)), 100)
 

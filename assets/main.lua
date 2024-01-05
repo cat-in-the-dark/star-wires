@@ -1,5 +1,6 @@
 require("assets/bullets")
 require("assets/objects")
+require("assets/ship")
 require("assets/vectors")
 require("assets/cursor")
 
@@ -42,37 +43,47 @@ function generateRandomRock()
     local x, y = randomPos()
     local minusHalf = V3(-0.5, -0.5, -0.5)
     local rotation = V3Add(V3Rand(), minusHalf)
-    local speed = V3(0, 0, -20)
+    local speed = V3(0, 0, -10)
     local model = rand(1, 8)
     table.insert(ROCKS, Rock(V3(x, y, initDist), rotation, speed, model))
 end
 
 function updateRocks()
     for i = #ROCKS, 1, -1 do
-        ROCKS[i].update(dt)
-        if ROCKS[i].get().pos.z < -10 then
+        local rock = ROCKS[i]
+        local raw = rock.get()
+        rock.update(dt)
+        if raw.pos.z < -10 then
             table.remove(ROCKS, i)
+            goto continue
         end
+
+        if not raw.collide then
+            goto continue
+        end
+
+        -- int i, float px, float py, float pz, float rx, float ry, float rz, float angle,
+        -- float scale, float lx1, float ly1, float lz1, float lx2, float ly2, float lz2
+        for j = #BULLETS, 1, -1 do
+            local bullet = BULLETS[j].get()
+            local l1, l2 = bullet.pos, bullet.nspeed
+            local mpos = raw.pos
+            local mrot = raw.rot
+            local res = collmdlline(raw.model, mpos.x, mpos.y, mpos.z, mrot.x, mrot.y, mrot.z, raw.rot_angle,
+                1, l1.x, l1.y, l1.z, l2.x, l2.y, l2.z)
+
+            if res.hit then
+                table.remove(BULLETS, j)
+                table.remove(ROCKS, i)
+                goto continue
+            end
+        end
+        ::continue::
     end
-end
-
-function initShipParts()
-    table.insert(SHIP_PARTS, Rock(V3(-4, -2, -3), V3(0, 0, 0), V3(0, 0, 0), MODEL.PUSHKA))
-    table.insert(SHIP_PARTS, Rock(V3(4, -2, -3), V3(0, 0, 0), V3(0, 0, 0), MODEL.PUSHKA))
-end
-
-function updateShipParts()
-    local pos1, pos2 = SHIP_PARTS[1].get().pos, SHIP_PARTS[2].get().pos
-
-    pos1.x = camera.px - 4
-    pos1.y = camera.py - 2
-    pos2.x = camera.px + 4
-    pos2.y = camera.py - 2
 end
 
 ROCKS = {}
 TIMERS = {}
-SHIP_PARTS = {}
 BULLETS = {}
 
 function Init()
@@ -80,11 +91,11 @@ function Init()
         generateRandomStar()
     end
 
-    initShipParts()
+    Ship = NewShip()
     Shooter = NewShooter()
 
     table.insert(TIMERS, Timer(0.02, generateRandomStar))
-    table.insert(TIMERS, Timer(0.5, generateRandomRock))
+    table.insert(TIMERS, Timer(1, generateRandomRock))
 end
 
 function Update()
@@ -98,13 +109,13 @@ function Update()
 
     for i = #BULLETS, 1, -1 do
         BULLETS[i].update(dt)
-        if BULLETS[i].get().pos.z > 50 then
+        if BULLETS[i].get().pos.z > 100 then
             table.remove(BULLETS, i)
         end
     end
 
     cursor.update(dt)
-    updateShipParts()
+    Ship.update(dt, camera)
 
     if ismouse() then
         Shooter.spawn(cursor)
@@ -115,13 +126,12 @@ function Draw()
     for i = 1, #ROCKS do
         ROCKS[i].draw()
     end
-    for i = 1, #SHIP_PARTS do
-        SHIP_PARTS[i].draw()
-    end
 
     for i = 1, #BULLETS do
         BULLETS[i].draw()
     end
+
+    Ship.draw()
 end
 
 function DrawCanvas()
