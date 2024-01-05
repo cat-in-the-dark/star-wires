@@ -161,8 +161,6 @@ int main(void) {
 
   target = LoadRenderTexture(screenWidth, screenHeight);
 
-  models[0] = LoadModel("assets/rock_21.obj");
-
   SetTargetFPS(60);
 
   lApi.Run();
