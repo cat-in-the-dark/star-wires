@@ -119,7 +119,7 @@ void LApi::Run() {
   lua["mdl"] = lua_DrawModel;
   lua["mdlex"] = lua_DrawModelEx;
   lua["ptcl"] = lua_DrawParticles;
-  lua["circle"] = [](float x, float y, float radius) { DrawCircleV({x, y}, radius, RED); };
+  lua["circle"] = [](float x, float y, float radius) { DrawCircleV({x, y}, radius, GREEN); };
   lua["camera"] = lua.create_table_with(
       "px", camera.position.x, "py", camera.position.y, "pz", camera.position.z, "tx", camera.target.x, "ty",
       camera.target.y, "tz", camera.target.z, "moveUp", [](float distance) { CameraMoveUp(&camera, distance); },
