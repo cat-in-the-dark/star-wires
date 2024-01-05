@@ -6,6 +6,7 @@
 
 #include "particles.h"
 #include "renderer.h"
+#include "shaker.h"
 
 extern Model models[128];
 extern Particles particles[128];
@@ -143,7 +144,8 @@ void LApi::Run() {
         camera.target.x = x;
         camera.target.y = y;
         camera.target.z = z;
-      });
+      },
+      "shake", StartCameraShaker);
   lua["mouse"] = lua.create_table_with("px", GetMouseX(), "py", GetMouseY(), "dx", 0, "dy", 0);
   lua["screen"] = lua.create_table_with("width", GetScreenWidth(), "height", GetScreenHeight());
   lua["star"] = [](float x, float y, float z, float radius) { DrawStar({x, y, z}, radius); };
