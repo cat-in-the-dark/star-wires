@@ -53,42 +53,20 @@ void lua_DrawParticles(int particle_id, float x, float y, float z, float x_axis,
 auto lua_ModelLineCollision(sol::state& lua, int i, float px, float py, float pz, float rx, float ry, float rz,
                             float angle, float scale, float lx1, float ly1, float lz1, float lx2, float ly2,
                             float lz2) {
+  auto model_id = i - 1;
   Vector3 lineStart = {lx1, ly1, lz1};
-  Vector3 lineEnd = {lx2, ly2, lz2};
-  auto lineLength = 2.0f;
-  Ray ray = {lineStart, Vector3Subtract(lineEnd, lineStart)};
-  auto model = models[i];
-
+  Vector3 lineEnd = Vector3Add(lineStart, {ly1, ly2, lz2});
   Vector3 position = {px, py, pz};
-  Vector3 rotationAxis = {rx, ry, rz};
 
-  auto distance = Vector3Distance(position, lineEnd);
-  if (distance < lineLength) {
+  auto distance = std::min(Vector3Distance(position, lineEnd), Vector3Distance(position, lineStart));
+  // TraceLog(LOG_INFO, "%d %.3f: %.3f %.3f %.3f, %.3f %.3f %.3f: %.3f", model_id, sizes[model_id], position.x,
+  // position.y,
+  //          position.z, lineEnd.x, lineEnd.y, lineEnd.z, distance);
+  if (distance < sizes[model_id]) {
     return lua.create_table_with("hit", true, "dist", distance);
   }
-  // } else {
-  //   TraceLog(LOG_INFO, "Close encounter: %.3f %.3f %.3f %.3f <=> %.3f %.3f %.3f", distance, px, py, pz, lx2, ly2,
-  //   lz2);
-  // }
-
-  // Calculate transformation matrix from function parameters
-  // Get transform matrix (rotation -> scale -> translation)
-  Matrix matScale = MatrixScale(scale, scale, scale);
-  Matrix matRotation = MatrixRotate(rotationAxis, angle * DEG2RAD);
-  Matrix matTranslation = MatrixTranslate(position.x, position.y, position.z);
-  Matrix matTransform = MatrixMultiply(MatrixMultiply(matScale, matRotation), matTranslation);
-
-  auto result = GetRayCollisionMesh(ray, model.meshes[0], matTransform);
-  if (result.hit) {
-    TraceLog(LOG_INFO, "Ray hit %.3f %.3f %.3f <=> %.3f %.3f %.3f", px, py, pz, lx2, ly2, lz2);
-    if (result.distance < lineLength) {
-      TraceLog(LOG_INFO, "Line hit %.3f %.3f %.3f %.3f <=> %.3f %.3f %.3f", result.distance, px, py, pz, lx2, ly2, lz2);
-      return lua.create_table_with("hit", true, "dist", result.distance);
-    }
-  }
-
-  return lua.create_table_with("hit", false, "dist", result.distance);
-};
+  return lua.create_table_with("hit", false, "dist", distance);
+}
 
 bool lua_CollidesPlayer(float x, float y, float z) {
   float radius = 1.4;  // TODO: use real

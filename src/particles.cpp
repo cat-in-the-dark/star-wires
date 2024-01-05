@@ -41,7 +41,7 @@ float CalculateMeanDistance(Model model) {
     totalLength += len3;
   }
 
-  return totalLength / mesh.triangleCount * 3;
+  return totalLength / (mesh.triangleCount * 3);
 }
 
 Particles MeshTriangleSplit(Model model, bool randomize) {
