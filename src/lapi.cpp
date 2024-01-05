@@ -11,6 +11,7 @@
 extern Model models[128];
 extern Particles particles[128];
 extern Camera camera;
+extern float sizes[128];
 
 float NormedMouseX() {
   float mx = GetMouseX();

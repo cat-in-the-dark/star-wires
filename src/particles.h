@@ -15,4 +15,6 @@ struct Particles {
   void Draw(Vector3 pos, float rotationAngle, Vector3 rotationAxis, float time, float speed, float lifetime);
 };
 
+float CalculateMeanDistance(Model model);
+
 Particles MeshTriangleSplit(Model model, bool randomize);

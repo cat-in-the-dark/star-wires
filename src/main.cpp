@@ -20,6 +20,7 @@
 static LApi lApi;
 
 Particles particles[128];
+float sizes[128];
 Model models[128];
 int n_models = 0;
 
@@ -175,6 +176,12 @@ void loadParticles() {
   }
 }
 
+void calculateSizes() {
+  for (int i = 0; i < n_models; i++) {
+    sizes[i] = CalculateMeanDistance(models[i]);
+  }
+}
+
 int main(void) {
   const int screenWidth = 640;
   const int screenHeight = 480;
@@ -201,6 +208,7 @@ int main(void) {
 
   loadModels();
   loadParticles();
+  calculateSizes();
 
   bloom = LoadShader(0, TextFormat("assets/shaders/glsl%i/bloom.fs", GLSL_VERSION));
   blur = LoadShader(0, TextFormat("assets/shaders/glsl%i/blur.fs", GLSL_VERSION));

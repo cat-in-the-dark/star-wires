@@ -19,6 +19,31 @@ Vector3 mean3(float* normals, int ti) {
   return v;
 }
 
+float CalculateMeanDistance(Model model) {
+  Mesh mesh = model.meshes[0];
+
+  float totalLength = 0;
+
+  for (int i = 0; i < mesh.triangleCount * 3; i += 3) {
+    int index1 = i;
+    int index2 = i + 1;
+    int index3 = i + 2;
+
+    // Draw lines for each edge of the triangle
+    auto len1 =
+        Vector3Length({mesh.vertices[3 * index1], mesh.vertices[3 * index1 + 1], mesh.vertices[3 * index1 + 2]});
+    auto len2 =
+        Vector3Length({mesh.vertices[3 * index2], mesh.vertices[3 * index2 + 1], mesh.vertices[3 * index2 + 2]});
+    auto len3 =
+        Vector3Length({mesh.vertices[3 * index3], mesh.vertices[3 * index3 + 1], mesh.vertices[3 * index3 + 2]});
+    totalLength += len1;
+    totalLength += len2;
+    totalLength += len3;
+  }
+
+  return totalLength / mesh.triangleCount * 3;
+}
+
 Particles MeshTriangleSplit(Model model, bool randomize) {
   Mesh mesh = model.meshes[0];
 
