@@ -1,11 +1,12 @@
 function NewShip()
     local self = {
-        dx = 2,
-        dy = -0.5
+        dx = 0.5,
+        dy = -0.2,
+        dz = -9.5
     }
 
-    self.left = Rock(V3(-self.dx, self.dy, -7), V3(0, 0, 0), V3(0, 0, 0), MODEL.PUSHKA)
-    self.right = Rock(V3(self.dx, self.dy, -7), V3(0, 0, 0), V3(0, 0, 0), MODEL.PUSHKA)
+    self.left = Rock(V3(-self.dx, self.dy, self.dz), V3(0, 0, 0), V3(0, 0, 0), MODEL.PUSHKA)
+    self.right = Rock(V3(self.dx, self.dy, self.dz), V3(0, 0, 0), V3(0, 0, 0), MODEL.PUSHKA)
 
     local get = function()
         return self
