@@ -103,14 +103,14 @@ void LApi::Update() {
   lua["mouse"]["dx"] = mouseDelta.x;
   lua["mouse"]["dy"] = mouseDelta.y;
 
-  must(lua["Update"].call());
-
   lua["camera"]["px"] = camera.position.x;
   lua["camera"]["py"] = camera.position.y;
   lua["camera"]["pz"] = camera.position.z;
   lua["camera"]["tx"] = camera.target.x;
   lua["camera"]["ty"] = camera.target.y;
   lua["camera"]["tz"] = camera.target.z;
+
+  must(lua["Update"].call());
 }
 
 void LApi::Run() {
