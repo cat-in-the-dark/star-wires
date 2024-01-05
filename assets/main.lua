@@ -49,6 +49,11 @@ function generateRandomRock()
     table.insert(ROCKS, Rock(V3(x, y, initDist), rotation, speed, model))
 end
 
+local function damage()
+    camera.shake()
+    -- TODO: DAMAGE
+end
+
 function updateRocks()
     for i = #ROCKS, 1, -1 do
         local rock = ROCKS[i]
@@ -81,6 +86,17 @@ function updateRocks()
             end
         end
         ::continue::
+    end
+
+    for i = #ROCKS, 1, -1 do
+        local rock = ROCKS[i]
+        local raw = rock.get()
+        if raw.collide then
+            if collidesPlayer(raw.pos.x, raw.pos.y, raw.pos.z) then
+                table.remove(ROCKS, i)
+                damage()
+            end
+        end
     end
 end
 
