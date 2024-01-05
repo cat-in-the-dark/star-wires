@@ -17,7 +17,7 @@
 #endif
 #include "shaker.h"
 
-static LApi lApi;
+static LApi* lApi;
 
 Particles particles[128];
 float sizes[128];
@@ -40,7 +40,7 @@ void Draw(void) {
 }
 
 void Update() {
-  lApi.Update();
+  lApi->Update();
 
   if (IsKeyDown(KEY_UP)) {
     debugCamera.position.y += 1;
@@ -89,11 +89,11 @@ void Update() {
 
   // Draw();
 
-  lApi.Draw();
+  lApi->Draw();
 
   EndMode3D();
 
-  lApi.DrawCanvas();
+  lApi->DrawCanvas();
 
   EndTextureMode();
 
@@ -118,7 +118,7 @@ void Update() {
 
     BeginMode3D(debugCamera);
 
-    lApi.Draw();
+    lApi->Draw();
 
     EndMode3D();
 
@@ -182,6 +182,26 @@ void calculateSizes() {
   }
 }
 
+void RunGame() {
+#if defined(PLATFORM_WEB)
+  lApi = new LApi();
+  lApi->Run();
+  emscripten_set_main_loop(Update, 0, 1);
+  delete lApi;
+#else
+  while (!WindowShouldClose()) {
+    bool restart = false;
+    lApi = new LApi();
+    lApi->Run();
+    while (!WindowShouldClose() && !restart) {
+      restart = IsKeyPressed(KEY_R);
+      Update();
+    }
+    delete lApi;
+  }
+#endif
+}
+
 int main(void) {
   const int screenWidth = 640;
   const int screenHeight = 480;
@@ -218,15 +238,7 @@ int main(void) {
 
   SetTargetFPS(60);
 
-  lApi.Run();
-
-#if defined(PLATFORM_WEB)
-  emscripten_set_main_loop(Update, 0, 1);
-#else
-  while (!WindowShouldClose()) {
-    Update();
-  }
-#endif
+  RunGame();
 
   UnloadModel(models[0]);  // Unload model
   UnloadRenderTexture(target);
