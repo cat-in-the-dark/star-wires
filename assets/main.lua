@@ -7,15 +7,15 @@ local cursor = NewCursor()
 local timer = 0
 
 MODEL = {
-    ROCK_01=1,
-    ROCK_02=2,
-    ROCK_03=3,
-    ROCK_04=4,
-    ROCK_05=5,
-    ROCK_13=6,
-    ROCK_20=7,
-    ROCK_21=8,
-    PUSHKA=9
+    ROCK_01 = 1,
+    ROCK_02 = 2,
+    ROCK_03 = 3,
+    ROCK_04 = 4,
+    ROCK_05 = 5,
+    ROCK_13 = 6,
+    ROCK_20 = 7,
+    ROCK_21 = 8,
+    PUSHKA = 9
 }
 
 function randomPos()
@@ -48,7 +48,7 @@ function generateRandomRock()
 end
 
 function updateRocks()
-    for i=#ROCKS,1,-1 do
+    for i = #ROCKS, 1, -1 do
         ROCKS[i].update(dt)
         if ROCKS[i].get().pos.z < -10 then
             table.remove(ROCKS, i)
@@ -76,7 +76,7 @@ SHIP_PARTS = {}
 BULLETS = {}
 
 function Init()
-    for i=1,100 do
+    for i = 1, 100 do
         generateRandomStar()
     end
 
@@ -92,11 +92,11 @@ function Update()
 
     updateRocks()
 
-    for i=1,#TIMERS do
+    for i = 1, #TIMERS do
         TIMERS[i].update(dt)
     end
 
-    for i=#BULLETS,1,-1 do
+    for i = #BULLETS, 1, -1 do
         BULLETS[i].update(dt)
         if BULLETS[i].get().pos.z > 50 then
             table.remove(BULLETS, i)
@@ -112,14 +112,14 @@ function Update()
 end
 
 function Draw()
-    for i=1,#ROCKS do
+    for i = 1, #ROCKS do
         ROCKS[i].draw()
     end
-    for i=1,#SHIP_PARTS do
+    for i = 1, #SHIP_PARTS do
         SHIP_PARTS[i].draw()
     end
 
-    for i=1,#BULLETS do
+    for i = 1, #BULLETS do
         BULLETS[i].draw()
     end
 end

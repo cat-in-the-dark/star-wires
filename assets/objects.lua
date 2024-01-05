@@ -1,10 +1,10 @@
 function Rock(pos, rot, speed, model)
     local self = {
-        pos=pos,
-        rot=rot,
-        speed=speed,
-        rot_angle=0,
-        model=model
+        pos = pos,
+        rot = rot,
+        speed = speed,
+        rot_angle = 0,
+        model = model
     }
 
     local get = function()
@@ -21,7 +21,7 @@ function Rock(pos, rot, speed, model)
     end
 
     return {
-        get=get,
+        get = get,
         update = update,
         draw = draw
     }
@@ -29,9 +29,9 @@ end
 
 function Star(pos, radius, speed)
     local self = {
-        pos=pos,
-        speed=speed,
-        radius=radius
+        pos = pos,
+        speed = speed,
+        radius = radius
     }
 
     local get = function()

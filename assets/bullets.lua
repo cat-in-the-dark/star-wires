@@ -28,9 +28,9 @@ end
 
 function Bullet(pos, speed)
     local self = {
-        pos=pos,
-        speed=speed,
-        nspeed=V3Mul(V3Norm(speed), 2)
+        pos = pos,
+        speed = speed,
+        nspeed = V3Mul(V3Norm(speed), 2)
     }
 
     local get = function()
@@ -48,7 +48,7 @@ function Bullet(pos, speed)
     end
 
     return {
-        get=get,
+        get = get,
         update = update,
         draw = draw
     }

@@ -28,7 +28,7 @@ function NewCursor()
         self.ny = (0.5 - self.y / screen.height) * 2.0
 
         if softSign(self.nx) ~= 0 then
-            camera.moveRight(moveSpeed * self.nx * dt) 
+            camera.moveRight(moveSpeed * self.nx * dt)
         end
         if softSign(self.ny) ~= 0 then
             camera.moveUp(moveSpeed * self.ny * dt)
@@ -42,7 +42,7 @@ function NewCursor()
         return self.x, self.y
     end
 
-    local draw = function() 
+    local draw = function()
         circle(self.x, self.y, self.radius)
     end
 
@@ -52,6 +52,5 @@ function NewCursor()
         getPos = getPos
     }
 end
-
 
 return NewCursor
