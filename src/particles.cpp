@@ -55,8 +55,8 @@ void Particles::Draw(Vector3 pos, float rotationAngle, Vector3 rotationAxis, flo
   }
 
   rlPushMatrix();
-  rlRotatef(rotationAngle, rotationAxis.x, rotationAxis.y, rotationAxis.z);
   rlTranslatef(pos.x, pos.y, pos.z);
+  rlRotatef(rotationAngle, rotationAxis.x, rotationAxis.y, rotationAxis.z);
   for (auto tri : triangles) {
     rlPushMatrix();
     auto pos = Vector3Scale(tri.dir, speed * time);

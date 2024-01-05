@@ -75,8 +75,8 @@ function updateRocks()
 
             if res.hit then
                 table.remove(BULLETS, j)
+                table.insert(PARTICLES, NewParticle(raw.pos, raw.speed, raw.rot, raw.rot_angle, raw.model))
                 table.remove(ROCKS, i)
-                table.insert(PARTICLES, NewParticle(raw.pos, raw.speed, raw.model))
                 goto continue
             end
         end
