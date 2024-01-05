@@ -11,12 +11,10 @@ function NewShooter()
 
         self.is_left = not self.is_left
         local ray = ray(cursor.getPos())
-        local sdir = V3Mul(ray.dir, 75)
-        local pos = V3Add(ray.pos, sdir)
 
-        local dz = V3(0, 0, 1)
+        local dz = V3(0, 0, 0)
         local spawn = V3Add(bpos, dz)
-        local speed = V3Mul(V3Norm(V3Sub(pos, spawn)), 100)
+        local speed = V3Mul(V3Norm(ray.dir), 30)
 
         table.insert(BULLETS, Bullet(spawn, speed))
     end
