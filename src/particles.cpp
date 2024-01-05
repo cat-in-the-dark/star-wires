@@ -43,6 +43,7 @@ void Particles::Draw(Vector3 pos, float time, float speed, float lifetime) {
   auto color = RED;
   float t = Clamp(time / lifetime, 0.0, 1.0);
   color.a = Lerp(255, 0, t);
+  color.b = Clamp(Lerp(0, 300, t), 0, 255);
 
   if (t >= 1) {
     return;
