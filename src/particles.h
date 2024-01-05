@@ -15,4 +15,4 @@ struct Particles {
   void Draw(Vector3 pos, float time, float speed, float lifetime);
 };
 
-Particles MeshTriangleSplit(Model model);
+Particles MeshTriangleSplit(Model model, bool randomize);

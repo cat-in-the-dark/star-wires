@@ -172,13 +172,15 @@ void loadModels() {
   models[n_rocks++] = LoadModel("assets/rock_20.obj");
   models[n_rocks++] = LoadModel("assets/rock_21.obj");
 
+  models[n_rocks++] = LoadModel("assets/gameover.obj");
+
   auto i = n_rocks;
   models[i++] = LoadModel("assets/pushka.obj");
 }
 
 void loadParticles() {
   for (int i = 0; i < n_rocks; i++) {
-    particles[i] = MeshTriangleSplit(models[i]);
+    particles[i] = MeshTriangleSplit(models[i], true);
   }
 }
 

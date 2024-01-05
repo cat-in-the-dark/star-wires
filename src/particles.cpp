@@ -18,7 +18,19 @@ Vector3 mean3(float* normals, int ti) {
   return v;
 }
 
-Particles MeshTriangleSplit(Model model) {
+float GetRandomFloat() {
+  return static_cast<float>(GetRandomValue(0, 1000)) / 1000.0;
+}
+
+Vector3 Vector3Random(float v) {
+  Vector3 vec;
+  vec.x = 2 * (GetRandomFloat() - 0.5) * v;
+  vec.y = 2 * (GetRandomFloat() - 0.5) * v;
+  vec.z = 2 * (GetRandomFloat() - 0.5) * v;
+  return vec;
+}
+
+Particles MeshTriangleSplit(Model model, bool randomize) {
   Mesh mesh = model.meshes[0];
 
   Particles particles;
@@ -26,6 +38,10 @@ Particles MeshTriangleSplit(Model model) {
   for (int i = 0; i < mesh.triangleCount * 3; i += 3) {
     Triangle tri;
     tri.dir = mean3(mesh.normals, i);
+    if (randomize) {
+      tri.dir = Vector3Add(tri.dir, Vector3Random(0.2));
+    }
+    // TraceLog(LOG_INFO, "%f %f %f", tri.dir.x, tri.dir.y, tri.dir.z);
 
     for (int vi = 0; vi < 3; vi++) {
       tri.vertices[vi].x = mesh.vertices[3 * (i + vi)];
