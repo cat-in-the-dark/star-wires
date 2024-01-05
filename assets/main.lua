@@ -118,6 +118,9 @@ function Init()
 
     table.insert(TIMERS, Timer(0.02, generateRandomStar))
     table.insert(TIMERS, Timer(1, generateRandomRock))
+    table.insert(TIMERS, Timer(0.2, function()
+        Shooter.spawn(cursor)
+    end))
 end
 
 function Update()
@@ -144,12 +147,8 @@ function Update()
         end
     end
 
-    cursor.update(dt)
     Ship.update(dt, camera)
 
-    if ismouse() then
-        Shooter.spawn(cursor)
-    end
 end
 
 function Draw()
@@ -166,6 +165,7 @@ function Draw()
     end
 
     Ship.draw()
+    cursor.update(dt)
 end
 
 function DrawCanvas()
