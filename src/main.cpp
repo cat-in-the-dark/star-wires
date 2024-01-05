@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "lapi.h"
+#include "particles.h"
 
 #if defined(PLATFORM_DESKTOP)
 #define GLSL_VERSION 330
@@ -16,7 +17,9 @@
 
 static LApi lApi;
 
+Particles particles[128];
 Model models[128];
+int n_models = 0;
 
 Camera camera = {0};
 
@@ -126,15 +129,21 @@ typedef struct LineModel {
 } LineModel;
 
 void loadModels() {
-  int i = 0;
-  models[i++] = LoadModel("assets/rock_01.obj");
-  models[i++] = LoadModel("assets/rock_02.obj");
-  models[i++] = LoadModel("assets/rock_03.obj");
-  models[i++] = LoadModel("assets/rock_04.obj");
-  models[i++] = LoadModel("assets/rock_05.obj");
-  models[i++] = LoadModel("assets/rock_13.obj");
-  models[i++] = LoadModel("assets/rock_20.obj");
-  models[i++] = LoadModel("assets/rock_21.obj");
+  n_models = 0;
+  models[n_models++] = LoadModel("assets/rock_01.obj");
+  models[n_models++] = LoadModel("assets/rock_02.obj");
+  models[n_models++] = LoadModel("assets/rock_03.obj");
+  models[n_models++] = LoadModel("assets/rock_04.obj");
+  models[n_models++] = LoadModel("assets/rock_05.obj");
+  models[n_models++] = LoadModel("assets/rock_13.obj");
+  models[n_models++] = LoadModel("assets/rock_20.obj");
+  models[n_models++] = LoadModel("assets/rock_21.obj");
+}
+
+void loadParticles() {
+  for (int i = 0; i < n_models; i++) {
+    particles[i] = MeshTriangleSplit(models[i]);
+  }
 }
 
 int main(void) {
@@ -156,6 +165,7 @@ int main(void) {
   camera.projection = CAMERA_PERSPECTIVE;  // Camera projection type
 
   loadModels();
+  loadParticles();
 
   bloom = LoadShader(0, TextFormat("assets/shaders/glsl%i/bloom.fs", GLSL_VERSION));
 
