@@ -19,7 +19,7 @@ static LApi lApi;
 
 Particles particles[128];
 Model models[128];
-int n_models = 0;
+int n_rocks = 0;
 
 Camera camera = {0};
 
@@ -34,6 +34,39 @@ void Draw(void) {
 
 void Update() {
   lApi.Update();
+
+  if (IsKeyDown(KEY_UP)) {
+    camera.position.y += 1;
+  }
+  if (IsKeyDown(KEY_DOWN)) {
+    camera.position.y -= 1;
+  }
+  if (IsKeyDown(KEY_LEFT)) {
+    camera.position.x -= 1;
+  }
+  if (IsKeyDown(KEY_RIGHT)) {
+    camera.position.x += 1;
+  }
+  if (IsKeyDown(KEY_W)) {
+    camera.target.y += 1;
+  }
+  if (IsKeyDown(KEY_S)) {
+    camera.target.y -= 1;
+  }
+  if (IsKeyDown(KEY_A)) {
+    camera.target.x -= 1;
+  }
+  if (IsKeyDown(KEY_D)) {
+    camera.target.x += 1;
+  }
+  if (IsKeyDown(KEY_Q)) {
+    camera.position.z += 1;
+  }
+  if (IsKeyDown(KEY_E)) {
+    camera.position.z -= 1;
+  }
+
+  // UpdateCamera(&camera, CAMERA_ORBITAL);
 
   BeginTextureMode(target);
 
@@ -129,19 +162,22 @@ typedef struct LineModel {
 } LineModel;
 
 void loadModels() {
-  n_models = 0;
-  models[n_models++] = LoadModel("assets/rock_01.obj");
-  models[n_models++] = LoadModel("assets/rock_02.obj");
-  models[n_models++] = LoadModel("assets/rock_03.obj");
-  models[n_models++] = LoadModel("assets/rock_04.obj");
-  models[n_models++] = LoadModel("assets/rock_05.obj");
-  models[n_models++] = LoadModel("assets/rock_13.obj");
-  models[n_models++] = LoadModel("assets/rock_20.obj");
-  models[n_models++] = LoadModel("assets/rock_21.obj");
+  n_rocks = 0;
+  models[n_rocks++] = LoadModel("assets/rock_01.obj");
+  models[n_rocks++] = LoadModel("assets/rock_02.obj");
+  models[n_rocks++] = LoadModel("assets/rock_03.obj");
+  models[n_rocks++] = LoadModel("assets/rock_04.obj");
+  models[n_rocks++] = LoadModel("assets/rock_05.obj");
+  models[n_rocks++] = LoadModel("assets/rock_13.obj");
+  models[n_rocks++] = LoadModel("assets/rock_20.obj");
+  models[n_rocks++] = LoadModel("assets/rock_21.obj");
+
+  auto i = n_rocks;
+  models[i++] = LoadModel("assets/pushka.obj");
 }
 
 void loadParticles() {
-  for (int i = 0; i < n_models; i++) {
+  for (int i = 0; i < n_rocks; i++) {
     particles[i] = MeshTriangleSplit(models[i]);
   }
 }

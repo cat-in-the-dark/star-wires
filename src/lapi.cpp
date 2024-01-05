@@ -105,6 +105,25 @@ void LApi::Run() {
   lua["mouse"] = lua.create_table_with("px", GetMouseX(), "py", GetMouseY(), "dx", 0, "dy", 0);
   lua["screen"] = lua.create_table_with("width", GetScreenWidth(), "height", GetScreenHeight());
   lua["star"] = [](float x, float y, float z, float radius) { DrawStar({x, y, z}, radius); };
+  lua["ray"] = [&](float x, float y) {
+    auto res = GetMouseRay({x, y}, camera);
+    auto pos = res.position;
+    auto dir = res.direction;
+
+    return lua.create_table_with("pos", lua.create_table_with("x", pos.x, "y", pos.y, "z", pos.z), "dir",
+                                 lua.create_table_with("x", dir.x, "y", dir.y, "z", dir.z));
+  };
+  lua["ismouse"] = []() { return IsMouseButtonPressed(MOUSE_BUTTON_LEFT); };
+  lua["line3d"] = [](float x1, float y1, float z1, float x2, float y2, float z2) {
+    DrawLine3D({x1, y1, z1}, {x2, y2, z2}, GREEN);
+  };
+  lua["rawray"] = [](float x, float y) { return GetMouseRay({x, y}, camera); };
+  lua["drawray"] = [](Ray ray) {
+    auto pos = ray.position;
+    auto dir = ray.direction;
+    TraceLog(LOG_INFO, "%.3f %.3f %.3f => %.3f %.3f %.3f", pos.x, pos.y, pos.z, dir.x, dir.y, dir.z);
+    DrawRay(ray, GREEN);
+  };
 
   must(lua.script_file("assets/main.lua"));
 

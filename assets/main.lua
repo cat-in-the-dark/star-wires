@@ -1,3 +1,4 @@
+require("assets/bullets")
 require("assets/objects")
 require("assets/vectors")
 require("assets/cursor")
@@ -14,6 +15,7 @@ MODEL = {
     ROCK_13=6,
     ROCK_20=7,
     ROCK_21=8,
+    PUSHKA=9
 }
 
 function randomPos()
@@ -23,7 +25,7 @@ end
 
 function generateRandomStar()
     local angle = rand() * 2 * math.pi
-    local minDistanca, maxDistance = 15, 100
+    local minDistanca, maxDistance = 15, 75
     local distance = rand(minDistanca, maxDistance)
     local x, y = math.cos(angle), math.sin(angle)
     x, y = x * distance, y * distance
@@ -54,20 +56,38 @@ function updateRocks()
     end
 end
 
+function initShipParts()
+    table.insert(SHIP_PARTS, Rock(V3(-4, -2, -3), V3(0, 0, 0), V3(0, 0, 0), MODEL.PUSHKA))
+    table.insert(SHIP_PARTS, Rock(V3(4, -2, -3), V3(0, 0, 0), V3(0, 0, 0), MODEL.PUSHKA))
+end
+
+function updateShipParts()
+    local pos1, pos2 = SHIP_PARTS[1].get().pos, SHIP_PARTS[2].get().pos
+
+    pos1.x = camera.px - 4
+    pos1.y = camera.py - 2
+    pos2.x = camera.px + 4
+    pos2.y = camera.py - 2
+end
+
 ROCKS = {}
 TIMERS = {}
+SHIP_PARTS = {}
+BULLETS = {}
 
 function Init()
     for i=1,100 do
         generateRandomStar()
     end
 
+    initShipParts()
+    Shooter = NewShooter()
+
     table.insert(TIMERS, Timer(0.02, generateRandomStar))
     table.insert(TIMERS, Timer(0.5, generateRandomRock))
 end
 
 function Update()
-    print(#ROCKS)
     timer = timer + dt
 
     updateRocks()
@@ -76,12 +96,31 @@ function Update()
         TIMERS[i].update(dt)
     end
 
+    for i=#BULLETS,1,-1 do
+        BULLETS[i].update(dt)
+        if BULLETS[i].get().pos.z > 50 then
+            table.remove(BULLETS, i)
+        end
+    end
+
     cursor.update(dt)
+    updateShipParts()
+
+    if ismouse() then
+        Shooter.spawn(cursor)
+    end
 end
 
 function Draw()
     for i=1,#ROCKS do
         ROCKS[i].draw()
+    end
+    for i=1,#SHIP_PARTS do
+        SHIP_PARTS[i].draw()
+    end
+
+    for i=1,#BULLETS do
+        BULLETS[i].draw()
     end
 end
 

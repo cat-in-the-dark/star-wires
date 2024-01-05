@@ -38,6 +38,10 @@ function NewCursor()
         self.y = self.y + 10 * moveSpeed * softSign(self.ny) * dt
     end
 
+    local getPos = function()
+        return self.x, self.y
+    end
+
     local draw = function() 
         circle(self.x, self.y, self.radius)
     end
@@ -45,6 +49,7 @@ function NewCursor()
     return {
         draw = draw,
         update = update,
+        getPos = getPos
     }
 end
 
