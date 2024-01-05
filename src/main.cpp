@@ -19,7 +19,7 @@ static LApi lApi;
 
 Particles particles[128];
 Model models[128];
-int n_rocks = 0;
+int n_models = 0;
 
 Camera camera = {0};
 
@@ -162,24 +162,22 @@ typedef struct LineModel {
 } LineModel;
 
 void loadModels() {
-  n_rocks = 0;
-  models[n_rocks++] = LoadModel("assets/rock_01.obj");
-  models[n_rocks++] = LoadModel("assets/rock_02.obj");
-  models[n_rocks++] = LoadModel("assets/rock_03.obj");
-  models[n_rocks++] = LoadModel("assets/rock_04.obj");
-  models[n_rocks++] = LoadModel("assets/rock_05.obj");
-  models[n_rocks++] = LoadModel("assets/rock_13.obj");
-  models[n_rocks++] = LoadModel("assets/rock_20.obj");
-  models[n_rocks++] = LoadModel("assets/rock_21.obj");
+  n_models = 0;
+  models[n_models++] = LoadModel("assets/rock_01.obj");
+  models[n_models++] = LoadModel("assets/rock_02.obj");
+  models[n_models++] = LoadModel("assets/rock_03.obj");
+  models[n_models++] = LoadModel("assets/rock_04.obj");
+  models[n_models++] = LoadModel("assets/rock_05.obj");
+  models[n_models++] = LoadModel("assets/rock_13.obj");
+  models[n_models++] = LoadModel("assets/rock_20.obj");
+  models[n_models++] = LoadModel("assets/rock_21.obj");
+  models[n_models++] = LoadModel("assets/pushka.obj");
 
-  models[n_rocks++] = LoadModel("assets/gameover.obj");
-
-  auto i = n_rocks;
-  models[i++] = LoadModel("assets/pushka.obj");
+  models[n_models++] = LoadModel("assets/gameover.obj");
 }
 
 void loadParticles() {
-  for (int i = 0; i < n_rocks; i++) {
+  for (int i = 0; i < n_models; i++) {
     particles[i] = MeshTriangleSplit(models[i], true);
   }
 }
