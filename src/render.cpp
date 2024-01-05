@@ -37,11 +37,11 @@ void DrawStar(Vector3 position, float radius) {
   auto top = radiusVec;
   auto bottom = Vector3Scale(radiusVec, -1.0f);
 
-  auto leftStart = Vector3RotateByAxisAngle(top, {0, 0, 0}, PI / 3);
-  auto leftEnd = Vector3RotateByAxisAngle(bottom, {0, 0, 0}, PI / 3);
+  auto leftStart = Vector3RotateByAxisAngle(top, {0, 0, 1}, PI / 3);
+  auto leftEnd = Vector3RotateByAxisAngle(bottom, {0, 0, 1}, PI / 3);
 
-  auto rightStart = Vector3RotateByAxisAngle(top, {0, 0, 0}, -PI / 3);
-  auto rightEnd = Vector3RotateByAxisAngle(bottom, {0, 0, 0}, -PI / 3);
+  auto rightStart = Vector3RotateByAxisAngle(top, {0, 0, 1}, -PI / 3);
+  auto rightEnd = Vector3RotateByAxisAngle(bottom, {0, 0, 1}, -PI / 3);
 
   rlPushMatrix();
   rlTranslatef(position.x, position.y, position.z);
