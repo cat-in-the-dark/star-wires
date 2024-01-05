@@ -1,5 +1,6 @@
 require("assets/bullets")
 require("assets/objects")
+require("assets/particles")
 require("assets/ship")
 require("assets/vectors")
 require("assets/cursor")
@@ -75,6 +76,7 @@ function updateRocks()
             if res.hit then
                 table.remove(BULLETS, j)
                 table.remove(ROCKS, i)
+                table.insert(PARTICLES, NewParticle(raw.pos, raw.speed, raw.model))
                 goto continue
             end
         end
@@ -85,6 +87,7 @@ end
 ROCKS = {}
 TIMERS = {}
 BULLETS = {}
+PARTICLES = {}
 
 function Init()
     for i = 1, 100 do
@@ -114,6 +117,14 @@ function Update()
         end
     end
 
+    for i = #PARTICLES, 1, -1 do
+        local p = PARTICLES[i]
+        p.update(dt)
+        if p.done() then
+            table.remove(PARTICLES, i)
+        end
+    end
+
     cursor.update(dt)
     Ship.update(dt, camera)
 
@@ -129,6 +140,10 @@ function Draw()
 
     for i = 1, #BULLETS do
         BULLETS[i].draw()
+    end
+
+    for i = #PARTICLES, 1, -1 do
+        PARTICLES[i].draw()
     end
 
     Ship.draw()
