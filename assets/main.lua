@@ -25,7 +25,7 @@ function randomPos()
     return (rand() - 0.5) * scale, (rand() - 0.5) * scale
 end
 
-function generateRandomStar()
+function generateRandomStar(dz)
     local angle = rand() * 2 * math.pi
     local minDistanca, maxDistance = 15, 75
     local distance = rand(minDistanca, maxDistance)
@@ -34,13 +34,16 @@ function generateRandomStar()
     local scale = 0.5
     local speedMin, speedMax = -10, -5
     local initDist = 150
+    if dz then
+        initDist = rand(dz)
+    end
     local radius = rand() * scale
     local speed = V3(0, 0, rand(speedMin, speedMax))
     table.insert(ROCKS, Star(V3(x, y, initDist), radius, speed))
 end
 
 function generateRandomRock()
-    local initDist = 150
+    local initDist = 120
     local x, y = randomPos()
     local minusHalf = V3(-0.5, -0.5, -0.5)
     local rotation = V3Add(V3Rand(), minusHalf)
@@ -106,8 +109,8 @@ BULLETS = {}
 PARTICLES = {}
 
 function Init()
-    for i = 1, 100 do
-        generateRandomStar()
+    for i = 1, 200 do
+        generateRandomStar(150)
     end
 
     Ship = NewShip()
