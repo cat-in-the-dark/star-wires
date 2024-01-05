@@ -90,6 +90,17 @@ auto lua_ModelLineCollision(sol::state& lua, int i, float px, float py, float pz
   return lua.create_table_with("hit", false, "dist", result.distance);
 };
 
+bool lua_CollidesPlayer(float x, float y, float z) {
+  float radius = 1.4;  // TODO: use real
+  float playerRadius = 2;
+
+  auto pos = camera.position;
+
+  auto res = CheckCollisionSpheres(camera.position, playerRadius, {x, y, z}, radius);
+  // TraceLog(LOG_INFO, "%d p=(%f %f %f) e=(%f %f %f)", res, pos.x, pos.y, pos.z, x, y, z);
+  return res;
+}
+
 LApi::LApi() {
   lua.open_libraries(sol::lib::base, sol::lib::package, sol::lib::base, sol::lib::string, sol::lib::math,
                      sol::lib::table, sol::lib::coroutine);
@@ -173,6 +184,8 @@ void LApi::Run() {
                                     float scale, float lx1, float ly1, float lz1, float lx2, float ly2, float lz2) {
     return lua_ModelLineCollision(lua, i, px, py, pz, rx, ry, rz, angle, scale, lx1, ly1, lz1, lx2, ly2, lz2);
   };
+
+  lua["collidesPlayer"] = lua_CollidesPlayer;
 
   must(lua.script_file("assets/main.lua"));
 
