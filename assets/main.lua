@@ -21,7 +21,7 @@ MODEL = {
 }
 
 function randomPos()
-    local scale = 15
+    local scale = 25
     return (rand() - 0.5) * scale, (rand() - 0.5) * scale
 end
 
@@ -43,7 +43,7 @@ function generateRandomStar(dz)
 end
 
 function generateRandomRock()
-    local initDist = 120
+    local initDist = 150
     local x, y = randomPos()
     local minusHalf = V3(-0.5, -0.5, -0.5)
     local rotation = V3Add(V3Rand(), minusHalf)
@@ -82,10 +82,13 @@ function updateRocks()
                 1, l1.x, l1.y, l1.z, l2.x, l2.y, l2.z)
 
             if res.hit then
-                table.remove(BULLETS, j)
-                table.insert(PARTICLES, NewParticle(raw.pos, raw.speed, raw.rot, raw.rot_angle, raw.model))
-                table.remove(ROCKS, i)
-                goto continue
+                raw.lives = raw.lives - 1
+                if raw.lives <= 0 then
+                    table.remove(BULLETS, j)
+                    table.insert(PARTICLES, NewParticle(raw.pos, raw.speed, raw.rot, raw.rot_angle, raw.model))
+                    table.remove(ROCKS, i)
+                    goto continue
+                end
             end
         end
         ::continue::
@@ -117,7 +120,7 @@ function Init()
     Shooter = NewShooter()
 
     table.insert(TIMERS, Timer(0.02, generateRandomStar))
-    table.insert(TIMERS, Timer(1, generateRandomRock))
+    table.insert(TIMERS, Timer(0.3, generateRandomRock))
     table.insert(TIMERS, Timer(0.2, function()
         Shooter.spawn(cursor)
     end))
@@ -148,7 +151,6 @@ function Update()
     end
 
     Ship.update(dt, camera)
-
 end
 
 function Draw()

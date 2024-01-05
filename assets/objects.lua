@@ -1,6 +1,7 @@
 function Rock(pos, rot, speed, model)
     local self = {
         collide = true,
+        lives = 3,
         pos = pos,
         rot = rot,
         speed = speed,
