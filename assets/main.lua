@@ -21,7 +21,7 @@ MODEL = {
 }
 
 function randomPos()
-    local scale = 25
+    local scale = 30
     return (rand() - 0.5) * scale, (rand() - 0.5) * scale
 end
 
@@ -42,8 +42,11 @@ function generateRandomStar(dz)
     table.insert(ROCKS, Star(V3(x, y, initDist), radius, speed))
 end
 
-function generateRandomRock()
+function generateRandomRock(dz)
     local initDist = 150
+    if dz then
+        initDist = rand(dz) + 10
+    end
     local x, y = randomPos()
     local minusHalf = V3(-0.5, -0.5, -0.5)
     local rotation = V3Add(V3Rand(), minusHalf)
@@ -116,11 +119,15 @@ function Init()
         generateRandomStar(150)
     end
 
+    for i = 1, 50 do
+        generateRandomRock(150)
+    end
+
     Ship = NewShip()
     Shooter = NewShooter()
 
     table.insert(TIMERS, Timer(0.02, generateRandomStar))
-    table.insert(TIMERS, Timer(0.3, generateRandomRock))
+    table.insert(TIMERS, Timer(0.25, generateRandomRock))
     table.insert(TIMERS, Timer(0.2, function()
         Shooter.spawn(cursor)
     end))
