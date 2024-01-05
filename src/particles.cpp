@@ -1,5 +1,6 @@
 #include "particles.h"
 
+#include <raymath.h>
 #include <rlgl.h>
 
 #include "renderer.h"
@@ -38,14 +39,22 @@ Particles MeshTriangleSplit(Model model) {
   return particles;
 }
 
-void Particles::Draw(Vector3 pos, float time) {
-  float speed = 10;
+void Particles::Draw(Vector3 pos, float time, float speed, float lifetime) {
+  auto color = RED;
+  float t = Clamp(time / lifetime, 0.0, 1.0);
+  color.a = Lerp(255, 0, t);
+
+  if (t >= 1) {
+    return;
+  }
+
   rlPushMatrix();
   rlTranslatef(pos.x, pos.y, pos.z);
   for (auto tri : triangles) {
     rlPushMatrix();
-    rlTranslatef(tri.dir.x * speed * time, tri.dir.z * speed * time, tri.dir.y * speed * time);
-    DrawLineTriangle3DCull(tri.vertices[0], tri.vertices[1], tri.vertices[2], RED);
+    auto pos = Vector3Scale(tri.dir, speed * time);
+    rlTranslatef(pos.x, pos.y, pos.z);
+    DrawLineTriangle3DCull(tri.vertices[0], tri.vertices[1], tri.vertices[2], color);
     rlPopMatrix();
   }
   rlPopMatrix();

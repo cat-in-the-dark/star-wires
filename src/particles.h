@@ -12,7 +12,7 @@ struct Triangle {
 struct Particles {
   std::vector<Triangle> triangles;
 
-  void Draw(Vector3 pos, float time);
+  void Draw(Vector3 pos, float time, float speed, float lifetime);
 };
 
 Particles MeshTriangleSplit(Model model);
