@@ -41,9 +41,10 @@ void lua_DrawModel(int model_id, float x, float y, float z, float scale) {
   DrawLineModelCulled(model, {x, y, z}, scale);
 }
 
-void lua_DrawParticles(int particle_id, float x, float y, float z, float time, float speed, float lifetime) {
+void lua_DrawParticles(int particle_id, float x, float y, float z, float x_axis, float y_axis, float z_axis,
+                       float angle, float time, float speed, float lifetime) {
   Particles p = particles[particle_id - 1];
-  p.Draw({x, y, z}, time, speed, lifetime);
+  p.Draw({x, y, z}, angle, {x_axis, y_axis, z_axis}, time, speed, lifetime);
 }
 
 LApi::LApi() {

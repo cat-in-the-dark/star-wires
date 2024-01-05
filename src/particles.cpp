@@ -3,6 +3,7 @@
 #include <raymath.h>
 #include <rlgl.h>
 
+#include "mymath.h"
 #include "renderer.h"
 
 Vector3 mean3(float* normals, int ti) {
@@ -16,18 +17,6 @@ Vector3 mean3(float* normals, int ti) {
   v.y /= 3.0;
   v.z /= 3.0;
   return v;
-}
-
-float GetRandomFloat() {
-  return static_cast<float>(GetRandomValue(0, 1000)) / 1000.0;
-}
-
-Vector3 Vector3Random(float v) {
-  Vector3 vec;
-  vec.x = 2 * (GetRandomFloat() - 0.5) * v;
-  vec.y = 2 * (GetRandomFloat() - 0.5) * v;
-  vec.z = 2 * (GetRandomFloat() - 0.5) * v;
-  return vec;
 }
 
 Particles MeshTriangleSplit(Model model, bool randomize) {
@@ -55,7 +44,7 @@ Particles MeshTriangleSplit(Model model, bool randomize) {
   return particles;
 }
 
-void Particles::Draw(Vector3 pos, float time, float speed, float lifetime) {
+void Particles::Draw(Vector3 pos, float rotationAngle, Vector3 rotationAxis, float time, float speed, float lifetime) {
   auto color = RED;
   float t = Clamp(time / lifetime, 0.0, 1.0);
   color.a = Lerp(255, 0, t);
@@ -66,6 +55,7 @@ void Particles::Draw(Vector3 pos, float time, float speed, float lifetime) {
   }
 
   rlPushMatrix();
+  rlRotatef(rotationAngle, rotationAxis.x, rotationAxis.y, rotationAxis.z);
   rlTranslatef(pos.x, pos.y, pos.z);
   for (auto tri : triangles) {
     rlPushMatrix();
