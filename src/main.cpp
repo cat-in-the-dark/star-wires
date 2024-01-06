@@ -78,6 +78,9 @@ void Update() {
   if (IsKeyDown(KEY_SPACE)) {
     StartCameraShaker();
   }
+  if (IsKeyPressed(KEY_F)) {
+    ToggleFullscreen();
+  }
 
   // UpdateCamera(&camera, CAMERA_ORBITAL);
 
@@ -98,7 +101,7 @@ void Update() {
   EndTextureMode();
 
   BeginDrawing();
-  ClearBackground(BLACK);
+  ClearBackground(RAYWHITE);
 
   BeginShaderMode(bloom);
 
@@ -203,8 +206,8 @@ void RunGame() {
 }
 
 int main(void) {
-  const int screenWidth = 640;
-  const int screenHeight = 480;
+  const int screenWidth = 800;
+  const int screenHeight = 600;
 
   InitWindow(screenWidth, screenHeight, "raylib [3d]");
   // ToggleFullscreen();
