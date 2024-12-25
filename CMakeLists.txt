@@ -39,7 +39,22 @@ set(SOL2_LUA_VERSION "5.4.4" CACHE STRING "The version of Lua used")
 set(SOL2_BUILD_LUA FALSE CACHE BOOL "Always build Lua, do not search for it in the system")
 add_subdirectory(vendor/sol2)
 
+if(MSVC)
+    set_target_properties(glfw PROPERTIES MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    set_target_properties(raylib PROPERTIES MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    set_target_properties(lua PROPERTIES MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    set_target_properties(sol2 PROPERTIES MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
+
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
+
+if(MSVC)
+    set_target_properties(${PROJECT_NAME} PROPERTIES MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    target_link_libraries(${PROJECT_NAME}
+        -INCREMENTAL:NO
+        -NODEFAULTLIB:MSVCRT
+    )
+endif()
 
 target_include_directories(${PROJECT_NAME} PUBLIC SYSTEM vendor/raylib/src vendor/lua/ vendor/sol2/include/)
 target_link_libraries(${PROJECT_NAME} raylib lua sol2)

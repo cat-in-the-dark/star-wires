@@ -107,8 +107,8 @@ void Update() {
 
   BeginShakeCamera();
 
-  DrawTextureRec(target.texture, (Rectangle){0, 0, (float) target.texture.width, (float) -target.texture.height},
-                 (Vector2){0, 0}, WHITE);
+  DrawTextureRec(target.texture, {0, 0, (float) target.texture.width, (float) -target.texture.height},
+                 {0, 0}, WHITE);
 
   EndUpdateShakeCamera();
 
